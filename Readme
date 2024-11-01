@@ -1,3 +1,4 @@
+********I added env file so that if needed, the user can try this  usually I avoid this kind of thing using gitignore I don't push the env file at GitHub ****
 Vehicle Allocation System
 Overview
 The Vehicle Allocation System is a robust FastAPI-based application designed to manage vehicle allocations for employees in an organization. 
