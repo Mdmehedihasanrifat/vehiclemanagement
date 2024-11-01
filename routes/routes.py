@@ -1,12 +1,33 @@
 from fastapi import APIRouter, HTTPException, Query
+import json
 from typing import List, Optional
 from datetime import datetime, date
 from bson import ObjectId
 from models.models import AllocationResponse,AllocationCreate, AllocationUpdate
 from config import database
 from datetime import datetime
+import redis.asyncio as redis
 router = APIRouter()
 
+
+# Redis connection setup
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
+
+# Caching utility functions
+async def get_cached_data(cache_key):
+    cached_data = await redis_client.get(cache_key)
+    if cached_data:
+        return json.loads(cached_data)
+    return None
+
+async def set_cached_data(cache_key, data, expiration=3600):
+    await redis_client.setex(cache_key, expiration, json.dumps(data))
+
+async def delete_cache_keys(patterns):
+    for pattern in patterns:
+        keys = await redis_client.keys(pattern)
+        if keys:
+            await redis_client.delete(*keys)
 
 @router.post("/allocations", response_model=AllocationResponse)
 async def create_allocation(allocation: AllocationCreate):
@@ -275,9 +296,16 @@ async def get_allocation_history(
 
     # Execute aggregation pipeline
     allocations = await database.allocations.aggregate(pipeline).to_list(length=None)
-
+  # Create a unique cache key based on parameters
+    cache_key = f"allocation_history:{start_date}:{end_date}:{employee_id}:{vehicle_id}:{status}:{skip}:{limit}"
+    
+    # Try to get cached data
+    cached_result = await get_cached_data(cache_key)
+    if cached_result:
+        return cached_result
     # Check if allocations were found
     if not allocations:
         raise HTTPException(status_code=404, detail="No allocation records found for the given filters.")
 
+    await set_cached_data(cache_key, allocations)
     return allocations

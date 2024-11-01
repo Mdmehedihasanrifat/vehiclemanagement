@@ -4,3 +4,4 @@ pymongo
 motor
 python-dotenv
 faker
+redis
