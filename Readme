@@ -1,0 +1,124 @@
+Vehicle Allocation System
+Overview
+The Vehicle Allocation System is a robust FastAPI-based application designed to manage vehicle allocations for employees in an organization. 
+
+Create vehicle allocations for employees
+Update existing allocations
+Delete allocations
+Retrieve allocation history 
+Caching mechanism for improved performance
+Comprehensive data validation
+Asynchronous database operations
+
+Technology Stack
+
+Backend Framework: FastAPI
+Database: MongoDB
+Cache: Redis
+ORM/Validation: Pydantic
+Data Generation: Faker
+Async Programming: Motor (Async MongoDB Driver)
+
+Prerequisites
+
+Python 3.12
+MongoDB
+Redis
+pip (Python package manager)
+
+Installation
+
+
+Create a virtual environment:
+bashCopypython -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+
+Install dependencies:
+pip install -r requirements.txt
+
+Set up environment variables:
+
+Create a .env file in the project root
+Add your MongoDB connection string:
+MONGODB_URL=mongodb://localhost:27017
+
+
+
+
+Configuration
+
+Database: MongoDB is used as the primary database
+Caching: Redis is configured for caching query results
+Indexes: Automatic index creation on startup for optimized queries
+
+Running the Application
+
+Start the FastAPI server:
+uvicorn main:app --reload
+
+Access the API documentation:
+
+Swagger UI: http://localhost:8000/docs
+ReDoc: http://localhost:8000/redoc
+
+
+
+Key Endpoints
+
+POST /api/allocations: Create a new vehicle allocation
+PUT /api/allocations/{allocation_id}: Update an existing allocation
+DELETE /api/allocations/{allocation_id}: Delete an allocation
+GET /api/allocations/history: Retrieve allocation history with filters
+
+Data Generation
+The system includes a fake data generator (fakeDataGenerator.py) to populate the database with sample data:
+
+Generates fake employees
+Creates sample vehicles
+Assigns drivers to vehicles
+
+Testing
+Run tests using pytest:
+pytest test/testing.py
+Key Components
+
+Models (models/models.py):
+
+Defines Pydantic models for data validation
+Includes models for allocations, creation, updates, and responses
+
+
+Routes (routes/routes.py):
+
+Implements API endpoints
+Handles business logic for allocations
+Includes validation and error handling
+
+
+Data Generation (fakeDataGenerator.py):
+
+Creates realistic fake data
+Supports database population for testing and development
+
+
+
+Performance Considerations
+
+Asynchronous database operations
+Redis caching for frequently accessed data
+Efficient MongoDB aggregation pipelines
+Unique index creation for data integrity
+
+Error Handling
+The application provides detailed error responses:
+
+404 for not found resources
+400 for invalid requests
+500 for server-side errors
+
+Security
+
+CORS middleware enabled
+Input validation using Pydantic
+Prevents allocation of vehicles on past dates
+Checks vehicle and employee existence before allocation
