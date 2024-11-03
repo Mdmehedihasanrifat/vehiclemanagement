@@ -8,8 +8,8 @@ WORKDIR /
 COPY . /
 
 # Install any dependencies specified in requirements.txt
-RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip -v && \
+    pip install --no-cache-dir -r requirement.txt -v
 
 # Expose port 8000 to the outside world
 EXPOSE 8000
